@@ -1,7 +1,7 @@
 import mysql.connector # Importa el conector de MySQL (API de Python)
 
-#Clase para la conexion a la base de datos para ejecutar consultas
-class conexion:
+# Clase para la conexion a la base de datos para ejecutar consultas
+class conectar:
     def __init__(self):
         self.__conn = mysql.connector.connect(
             host='localhost',
@@ -9,7 +9,7 @@ class conexion:
             password='sisT2025',
             database='banco'
         )
-#Metodo para consultar las tablas de la base de datos y probar la conexion a. Consultar
+# Metodo para consultar las tablas de la base de datos y probar la conexion a. Consultar
     def probar_conexion(self):
         cursor = self.__conn.cursor()
         cursor.execute("SHOW TABLES")
@@ -17,8 +17,24 @@ class conexion:
             print(table)
         cursor.close()
         self.__conn.close()
+# Metodo para ejecutar consultas SQL (INSERT, UPDATE, DELETE)
+    def ejecutar(self, sql:str, datos=None):
+        cursor = self.__conn.cursor() # Crea objeto tipo cursor
+        cursor.execute(sql, datos)
+        self.__conn.commit() # confirma cambios
+        if cursor.rowcount > 0:
+            return True
+        return False
+# Metodo para listar resultados de consultas SQL (SELECT)
+    def listar(self, sql:str):
+        cursor = self.__conn.cursor(dictionary=True)
+        cursor.execute(sql)
+        return cursor.fetchall()
+# Metodo para listar un solo resultado de consultas SQL (SELECT)    
+    def listar_uno(self, sql:str, datos=None):
+        cursor = self.__conn.cursor(dictionary=True)
+        cursor.execute(sql, datos)
+        return cursor.fetchone()    
 
-conexion = conexion() # Crear una instancia de la clase conexion
-conexion.probar_conexion() # Probar la conexion a la base de datos
-
-
+conexion = conectar() # Crea el objeto conexion para usar en otros archivos
+conexion.probar_conexion() # Prueba la conexion a la base de datos
